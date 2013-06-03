@@ -16,9 +16,7 @@ CONSUMER_SECRET = config.CONSUMER_SECRET
 
 oAuth = OAuth(OAUTH_TOKEN, OAUTH_SECRET, CONSUMER_KEY, CONSUMER_SECRET)	
 
-t = Twitter(
-		auth = oAuth
-	)
+t = Twitter(auth = oAuth)
 
 # WUNDERGROUND
 W_KEY  = config.W_KEY

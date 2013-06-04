@@ -31,7 +31,15 @@ class MyStreamer(TwythonStreamer):
             elif re.match(weather_regex, request):
                 location = re.sub(weather_regex, '', request)
                 report = helpers.weather(location)
-                response = "%s\n %s Min: %s Max: %s\n%s" % (username, report[0], report[1], report[2], report[3])
+
+                location_name = report[0]
+                min_today = report[1]
+                max_today = report[2]
+                summary = report[3]
+
+                info = (username, location_name, min_today, max_today, summary)
+
+                response = u"%s %s\n Min: %.0f\u2103 Max: %.0f\u2103\n%s" % info
                 t.update_status(status = response)
 
             elif re.match(laugh_regex, request):

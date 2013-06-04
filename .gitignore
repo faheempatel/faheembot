@@ -1,5 +1,5 @@
 config.py
-forcastio.py
+forecastio.py
 
 *.swp
 .DS_STORE

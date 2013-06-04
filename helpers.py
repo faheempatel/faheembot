@@ -37,10 +37,23 @@ def weather(location):
     lon, lat = coordinates
 
     # Get forecast
-    forecast.load_forecast(lon, lat, time=datetime.datetime.now(), units="si")
+    forecast.load_forecast(
+                            lon,
+                            lat,
+                            time=datetime.datetime.now(),
+                            units="si"
+                          )
+
     byDay = forecast.get_daily()
 
-    report = [(found_location_name, day.temperatureMin, day.temperatureMax, day.summary) for day in byDay.data]
+    report = [(
+                 str(found_location_name),
+                 day.temperatureMin,
+                 day.temperatureMax,
+                 day.summary
+              )
+              for day in byDay.data
+             ]
 
     # Return a flattened tuple
     return sum(report, ())

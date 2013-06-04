@@ -5,7 +5,7 @@ import json
 import config
 import requests
 import pywunder
-from twitter import *
+from twython import Twython
 from rottentomatoes import RT
 
 # TWITTER 
@@ -14,9 +14,7 @@ OAUTH_SECRET = config.OAUTH_SECRET
 CONSUMER_KEY = config.CONSUMER_KEY
 CONSUMER_SECRET = config.CONSUMER_SECRET
 
-oAuth = OAuth(OAUTH_TOKEN, OAUTH_SECRET, CONSUMER_KEY, CONSUMER_SECRET)	
-
-t = Twitter(auth = oAuth)
+t = Twython(CONSUMER_KEY, CONSUMER_SECRET, OAUTH_TOKEN, OAUTH_SECRET)	
 
 # WUNDERGROUND
 W_KEY  = config.W_KEY
@@ -24,7 +22,7 @@ wunder = pywunder.Client(W_KEY)
 
 # ROTTEN TOMATOES
 RT_KEY = config.RT_KEY
-rt = RT(rt_key)
+rt = RT(RT_KEY)
 
 # REDDIT
 r = praw.Reddit(user_agent="faheembot")
@@ -52,18 +50,18 @@ movie_regex = "@\w+ rate "
 weather_regex = "@\w+ weather for "
 laugh_regex = "@\w+ make me laugh"
 
-request_tweet = t.statuses.mentions_timeline()[0]['text'].lower()
-username = str("@" + t.statuses.mentions_timeline()[0]["user"]["screen_name"])
+request = t.get_mentions_timeline()[0]['text'].lower()
+username = str("@" + t.get_mentions_timeline()[0]["user"]["screen_name"])
 
-if re.match(movie_regex, request_tweet):
-	movie = re.sub(movie_regex, '', request_tweet)
-	response_tweet = "%s %s is a %s/100" % (username, movie, rate(movie))
-	t.statuses.update(status = response)
-elif re.match(weather_regex, request_tweet):
-	location = re.sub(weather_regex, '', request_request_tweet)
-	response_tweet = "%s %s" % (username, weather(location))
-	t.statuses.update(status = response)
-elif re.match(laugh_regex, request_tweet):
-	response_tweet = "%s Oh you've gotta see this: %s" % (username, make_me_laugh())
-	t.statuses.update(status = response)
+if re.match(movie_regex, request):
+	movie = re.sub(movie_regex, '', request)
+	response = "%s %s is a %s/100" % (username, movie, rate(movie))
+	t.update_status(status = response)
+elif re.match(weather_regex, request):
+	location = re.sub(weather_regex, '', request)
+	response = "%s %s" % (username, weather(location))
+	t.update_status(status = response)
+elif re.match(laugh_regex, request):
+	response = "%s Oh you've gotta see this: %s" % (username, make_me_laugh())
+	t.update_status(status = response)
 

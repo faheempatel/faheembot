@@ -1,4 +1,5 @@
 config.py
+forcastio.py
 
 *.swp
 .DS_STORE

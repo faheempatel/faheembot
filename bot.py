@@ -39,7 +39,7 @@ class MyStreamer(TwythonStreamer):
 
                 info = (username, location_name, min_today, max_today, summary)
 
-                response = u"%s %s\n Min: %.0f\u2103 Max: %.0f\u2103\n%s" % info
+                response = u"%s %s\nMin: %.0f\u2103 Max: %.0f\u2103\n%s" % info
                 t.update_status(status = response)
 
             elif re.match(laugh_regex, request):
@@ -51,6 +51,8 @@ class MyStreamer(TwythonStreamer):
             print "Key error"
 
     def on_error(self, status_code):
+        tweet = "@faheempatel Error: %s" % status_code
+        t.update_status(status = tweet)
         print status_code
 
 stream = MyStreamer(CONSUMER_KEY, CONSUMER_SECRET, OAUTH_TOKEN, OAUTH_SECRET)    

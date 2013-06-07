@@ -4,16 +4,31 @@ import config
 from twython import Twython, TwythonStreamer
 
 # TWITTER 
+KEY = config.CONSUMER_KEY
+SECRET = config.CONSUMER_SECRET
 OAUTH_TOKEN = config.OAUTH_TOKEN
 OAUTH_SECRET = config.OAUTH_SECRET
-CONSUMER_KEY = config.CONSUMER_KEY
-CONSUMER_SECRET = config.CONSUMER_SECRET
 
-t = Twython(CONSUMER_KEY, CONSUMER_SECRET, OAUTH_TOKEN, OAUTH_SECRET)    
+t = Twython(KEY, SECRET, OAUTH_TOKEN, OAUTH_SECRET)    
 
-movie_regex = "@\w+ rate "
-weather_regex = "@\w+ weather for "
-laugh_regex = "@\w+ make me laugh"
+movie_regex = r"@\w+ rate "
+weather_regex = r"@\w+ weather for "
+laugh_regex = r"@\w+ make me laugh"
+
+def tweet_rating(username, title, rating):
+    response = "%s %s is rated %s/100" % (username, title, rating)
+    t.update_status(status = response)
+
+def tweet_weather(username, report):
+    location_name, min_today, max_today, summary = report
+    info = (username, location_name, min_today, max_today, summary)
+
+    response = u"%s %s\nMin: %.0f\u2103 Max: %.0f\u2103\n%s" % info
+    t.update_status(status = response)
+
+def tweet_link(username, link):
+    response = "%s %s" % (username, link)
+    t.update_status(status = response)
 
 class MyStreamer(TwythonStreamer):
 
@@ -27,8 +42,7 @@ class MyStreamer(TwythonStreamer):
                 result = helpers.rate(movie)
                 if result:
                     title, rating = result
-                    response = "%s %s is rated %s/100" % (username, title, rating)
-                    t.update_status(status = response)
+                    tweet_rating(username, title, rating)
                 else:
                     response = "%s Can't find a rating for %s." % (username, movie)
                     t.update_status(status = response)
@@ -36,25 +50,19 @@ class MyStreamer(TwythonStreamer):
             elif re.match(weather_regex, request):
                 location = re.sub(weather_regex, '', request)
                 report = helpers.weather(location)
-
-                location_name, min_today, max_today, summary = report
-                info = (username, location_name, min_today, max_today, summary)
-
-                response = u"%s %s\nMin: %.0f\u2103 Max: %.0f\u2103\n%s" % info
-                t.update_status(status = response)
+                tweet_weather(username, report)
 
             elif re.match(laugh_regex, request):
                 link = helpers.make_me_laugh()
-                response = "%s Oh you've gotta see this: %s" % (username, link)
-                t.update_status(status = response)
+                tweet_link(username, link)
         except KeyError:
             # FIX THIS
             print "Key error"
 
-    def on_error(self, status_code):
+    def on_error(self, status_code, data):
         tweet = "@faheempatel Error: %s" % status_code
         t.update_status(status = tweet)
         print status_code
 
-stream = MyStreamer(CONSUMER_KEY, CONSUMER_SECRET, OAUTH_TOKEN, OAUTH_SECRET)    
+stream = MyStreamer(KEY, SECRET, OAUTH_TOKEN, OAUTH_SECRET)    
 stream.user()

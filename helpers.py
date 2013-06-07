@@ -48,17 +48,13 @@ def weather(location):
                           )
 
     byDay = forecast.get_daily()
-
     today = byDay.data[0]
-    todays_min = today.temperatureMin
-    todays_max = today.temperatureMax
-    todays_summary = today.summary
 
     report = (
                  name_of_place_found,
-                 todays_min,
-                 todays_max,
-                 todays_summary
+                 today.temperatureMin,
+                 today.temperatureMax,
+                 today.summary
              )
 
     return report

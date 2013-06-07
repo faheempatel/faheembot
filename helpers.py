@@ -16,44 +16,49 @@ r = praw.Reddit(user_agent="faheembot")
 
 def rate(movie):
     """Given a movie title will return the Rotten Tomatoes score for it"""
-    json = rt.search(movie)[0]
-    title = json['title'] 
-    rating = json['ratings']['critics_score']
-    return (title, rating)
+    try: 
+        json = rt.search(movie)[0]
+        title = json['title'] 
+        rating = json['ratings']['critics_score']
+        return (title, rating)
+    except IndexError:
+        return ()
 
 def make_me_laugh():
     """Returns the top r/funny link"""
     result = r.get_subreddit('funny').get_top(limit=1)
-    top_link = [str(post.short_link) for post in result][0]
-    return top_link
+    top_post = result.next()
+    return top_post.short_link
 
 def weather(location):
     """Returns today's forecast for the given location"""
 
-    # Find longitude and latitude values
+    # Find latitude and longitude values
     results = Geocoder.geocode(location)
-    found_location_name = results[0]
+    name_of_place_found = str(results[0])
     coordinates = results[0].coordinates
-    lon, lat = coordinates
+    lat, lon = coordinates
 
     # Get forecast
     forecast.load_forecast(
-                            lon,
                             lat,
+                            lon,
                             time=datetime.datetime.now(),
                             units="si"
                           )
 
     byDay = forecast.get_daily()
 
-    report = [(
-                 str(found_location_name),
-                 day.temperatureMin,
-                 day.temperatureMax,
-                 day.summary
-              )
-              for day in byDay.data
-             ]
+    today = byDay.data[0]
+    todays_min = today.temperatureMin
+    todays_max = today.temperatureMax
+    todays_summary = today.summary
 
-    # Return a flattened tuple
-    return sum(report, ())
+    report = (
+                 name_of_place_found,
+                 todays_min,
+                 todays_max,
+                 todays_summary
+             )
+
+    return report

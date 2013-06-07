@@ -14,4 +14,7 @@
 - Implement more rigorous parsing of incoming tweet
 - Keep conversation chain intact
 - Emoji for weather tweet?
+- Add automated features
+    - Weather report every morning
+    - Tweet when tube lines are down
 - Refactor!

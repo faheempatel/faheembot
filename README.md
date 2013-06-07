@@ -3,6 +3,7 @@
 ##TODO
 - Implement Twitter's streaming API
     - Fix key error issue
+    - Seems to need two tweets per request... investigate.
 - <del>Add forecast.io support</del>
 - Add reminder feature
 - Implement nice fallbacks should the tweet length exceed 140 chars

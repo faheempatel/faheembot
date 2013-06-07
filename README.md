@@ -12,7 +12,7 @@
     - Bus times
     - Tube line info
 - Implement more rigorous parsing of incoming tweet
-- Keep conversation chain intact
+- <del>Keep conversation chain intact</del>
 - Emoji for weather tweet?
 - Add automated features
     - Weather report every morning

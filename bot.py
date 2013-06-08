@@ -33,32 +33,31 @@ def tweet_link(tweet_id, username, link):
 class MyStreamer(TwythonStreamer):
 
     def on_success(self, data):
-        try: 
-            request = data['text'].lower()
-            tweet_id = data['id']
-            username = "@" + data["user"]["screen_name"]
+        if 'text' not in data:
+            return
 
-            if re.match(movie_regex, request):
-                movie = re.sub(movie_regex, '', request)
-                result = helpers.rate(movie)
-                if result:
-                    title, rating = result
-                    tweet_rating(tweet_id, username, title, rating)
-                else:
-                    response = "%s Can't find a rating for %s." % (username, movie)
-                    t.update_status(status = response)
+        request = data['text'].lower()
+        tweet_id = data['id']
+        username = "@" + data["user"]["screen_name"]
 
-            elif re.match(weather_regex, request):
-                location = re.sub(weather_regex, '', request)
-                report = helpers.weather(location)
-                tweet_weather(tweet_id, username, report)
+        if re.match(movie_regex, request):
+            movie = re.sub(movie_regex, '', request)
+            result = helpers.rate(movie)
+            if result:
+                title, rating = result
+                tweet_rating(tweet_id, username, title, rating)
+            else:
+                response = "%s Can't find a rating for %s." % (username, movie)
+                t.update_status(status = response)
 
-            elif re.match(laugh_regex, request):
-                link = helpers.make_me_laugh()
-                tweet_link(tweet_id, username, link)
-        except KeyError:
-            # FIX THIS
-            print "Key error"
+        elif re.match(weather_regex, request):
+            location = re.sub(weather_regex, '', request)
+            report = helpers.weather(location)
+            tweet_weather(tweet_id, username, report)
+
+        elif re.match(laugh_regex, request):
+            link = helpers.make_me_laugh()
+            tweet_link(tweet_id, username, link)
 
     def on_error(self, status_code, data):
         tweet = "@faheempatel Error: %s" % status_code
@@ -66,4 +65,4 @@ class MyStreamer(TwythonStreamer):
         print status_code
 
 stream = MyStreamer(KEY, SECRET, OAUTH_TOKEN, OAUTH_SECRET)    
-stream.user()
+stream.statuses.filter(track='@faheembot')

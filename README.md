@@ -1,5 +1,7 @@
 #faheembot
 
+A WIP Twitter bot that responds to specific queries tweeted to it.
+
 ##TODO
 - Implement Twitter's streaming API
     - Seems to need two tweets per request... investigate.

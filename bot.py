@@ -4,8 +4,8 @@ import config
 from twython import Twython, TwythonStreamer
 
 # TWITTER 
-KEY = config.CONSUMER_KEY
-SECRET = config.CONSUMER_SECRET
+APP_KEY = config.CONSUMER_KEY
+APP_SECRET = config.CONSUMER_SECRET
 OAUTH_TOKEN = config.OAUTH_TOKEN
 OAUTH_SECRET = config.OAUTH_SECRET
 
@@ -13,10 +13,11 @@ def tweet_rating(tweet_id, username, title, rating):
     """Replies with a movie rating"""
 
     response = "%s %s is rated %s/100" % (username, title, rating)
+
     t.update_status(
-                        status = response,
-                        in_reply_to_status_id = tweet_id
-                   )
+        status = response,
+        in_reply_to_status_id = tweet_id
+        )
 
 def tweet_weather(tweet_id, username, report):
     """Replies with the weather report"""
@@ -24,27 +25,29 @@ def tweet_weather(tweet_id, username, report):
     location_name, min_today, max_today, summary = report
 
     info = (
-                username,
-                location_name,
-                min_today,
-                max_today,
-                summary
-           )
+        username,
+        location_name,
+        min_today,
+        max_today,
+        summary
+        )
 
     response = u"%s %s\nMin: %.0f\u2103 Max: %.0f\u2103\n%s" % info
+
     t.update_status(
-                        status = response,
-                        in_reply_to_status_id = tweet_id
-                   )
+        status = response,
+        in_reply_to_status_id = tweet_id
+       )
 
 def tweet_link(tweet_id, username, link):
     """Replies with a link"""
 
     response = "%s %s" % (username, link)
+
     t.update_status(
-                        status = response,
-                        in_reply_to_status_id = tweet_id
-                   )
+        status = response,
+        in_reply_to_status_id = tweet_id
+        )
 
 class MyStreamer(TwythonStreamer):
 
@@ -82,10 +85,10 @@ class MyStreamer(TwythonStreamer):
             tweet_link(tweet_id, username, link)
 
     def on_error(self, status_code, data):
-        tweet = "@faheempatel Error: %s" % status_code
+        tweet = "@faheempatel Error: %s %s" % (status_code, data)
         t.update_status(status = tweet)
-        print status_code
+        self.disconnect()
 
-t = Twython(KEY, SECRET, OAUTH_TOKEN, OAUTH_SECRET)    
-stream = MyStreamer(KEY, SECRET, OAUTH_TOKEN, OAUTH_SECRET)    
+t = Twython(APP_KEY, APP_SECRET, OAUTH_TOKEN, OAUTH_SECRET)    
+stream = MyStreamer(APP_KEY, APP_SECRET, OAUTH_TOKEN, OAUTH_SECRET)    
 stream.statuses.filter(track='@faheembot')

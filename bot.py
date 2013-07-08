@@ -32,7 +32,7 @@ def tweet_weather(tweet_id, username, report):
         summary
         )
 
-    response = u"%s %s\nMin: %.0f\u2103 Max: %.0f\u2103\n%s" % info
+    response = u"%s %s\nNow: %.0f\u2103 Max: %.0f\u2103\n%s" % info
 
     t.update_status(
         status = response,

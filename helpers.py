@@ -47,12 +47,13 @@ def weather(location):
                             units="si"
                           )
 
+    current = forecast.get_currently()
     byDay = forecast.get_daily()
     today = byDay.data[0]
 
     report = (
                  name_of_place_found,
-                 today.temperatureMin,
+                 current.temperature,
                  today.temperatureMax,
                  today.summary
              )

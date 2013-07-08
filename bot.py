@@ -37,7 +37,7 @@ def tweet_weather(tweet_id, username, report):
     t.update_status(
         status = response,
         in_reply_to_status_id = tweet_id
-       )
+        )
 
 def tweet_link(tweet_id, username, link):
     """Replies with a link"""

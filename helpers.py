@@ -41,21 +41,21 @@ def weather(location):
 
     # Get forecast
     forecast.load_forecast(
-                            lat,
-                            lon,
-                            time=datetime.datetime.now(),
-                            units="si"
-                          )
+            lat,
+            lon,
+            time=datetime.datetime.now(),
+            units="si"
+            )
 
     current = forecast.get_currently()
     byDay = forecast.get_daily()
     today = byDay.data[0]
 
     report = (
-                 name_of_place_found,
-                 current.temperature,
-                 today.temperatureMax,
-                 today.summary
-             )
+            name_of_place_found,
+            current.temperature,
+            today.temperatureMax,
+            today.summary
+            )
 
     return report

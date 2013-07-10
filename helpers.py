@@ -1,55 +1,67 @@
+import re
 import praw
 import config
 import datetime
+from twython import Twython
 from rottentomatoes import RT
 from pygeocoder import Geocoder
 from forecastio import Forecastio
 
+# TWITTER
+T = Twython(
+        config.CONSUMER_KEY,
+        config.CONSUMER_SECRET,
+        config.OAUTH_TOKEN,
+        config.OAUTH_SECRET
+        )    
+
 # FORECAST.IO
-forecast = Forecastio(config.F_KEY)
+F = Forecastio(config.F_KEY)
 
 # ROTTEN TOMATOES
-rt = RT(config.RT_KEY)
+RT = RT(config.RT_KEY)
 
 # REDDIT
-r = praw.Reddit(user_agent="faheembot")
+R = praw.Reddit(user_agent="faheembot")
 
-def rate(movie):
-    """Given a movie title will return the Rotten Tomatoes score for it"""
+def get_movie_rating(movie):
+    """Returns a Rotten Tomatoes score for the given movie title"""
+
     try: 
-        json = rt.search(movie)[0]
+        json = RT.search(movie)[0]
         title = json['title'] 
         rating = json['ratings']['critics_score']
         return (title, rating)
     except IndexError:
-        return ()
+        return None
 
 def make_me_laugh():
     """Returns the top r/funny link"""
-    result = r.get_subreddit('funny').get_top(limit=1)
+
+    result = R.get_subreddit('funny').get_top(limit=1)
     top_post = result.next()
     return top_post.short_link
 
-def weather(location):
+def get_weather(location):
     """Returns today's forecast for the given location"""
 
     # Find latitude and longitude values
-    results = Geocoder.geocode(location)
+    results = Geocoder.geocode(location, address=None)
     name_of_place_found = str(results[0])
     coordinates = results[0].coordinates
     lat, lon = coordinates
 
     # Get forecast
-    forecast.load_forecast(
+    F.load_forecast(
             lat,
             lon,
             time=datetime.datetime.now(),
             units="si"
             )
 
-    current = forecast.get_currently()
-    byDay = forecast.get_daily()
-    today = byDay.data[0]
+    current = F.get_currently()
+    week = F.get_daily()
+    today = week.data[0]
 
     report = (
             name_of_place_found,
@@ -59,3 +71,57 @@ def weather(location):
             )
 
     return report
+
+def tweet_rating(movie_regex, tweet, tweet_id, username):
+    """Replies with a movie rating"""
+
+    movie = re.sub(movie_regex, '', tweet)
+    result = get_movie_rating(movie)
+
+    if result:
+        title, rating = result
+        response = "%s %s is rated %s/100" % (username, title, rating)
+        T.update_status(
+            status = response,
+            in_reply_to_status_id = tweet_id
+            )
+    else:
+        response = "%s Can't find a rating for %s." % (username, movie)
+        T.update_status(status = response)
+
+def tweet_weather(weather_regex, tweet, tweet_id, username):
+    """Replies with the weather report"""
+
+    location = re.sub(weather_regex, '', tweet)
+    report = get_weather(location)
+
+    location_name, current, max_today, summary = report
+
+    info = (
+        username,
+        location_name,
+        current,
+        max_today,
+        summary
+        )
+
+    response = u"%s %s\nNow: %.0f\u2103 Max: %.0f\u2103\n%s" % info
+
+    T.update_status(
+        status = response,
+        in_reply_to_status_id = tweet_id
+        )
+
+def tweet_link(tweet_id, username, link):
+    """Replies with a link"""
+
+    response = "%s %s" % (username, link)
+
+    T.update_status(
+        status = response,
+        in_reply_to_status_id = tweet_id
+        )
+
+def tweet_this(message):
+    """Will tweet out the given message"""
+    T.update_status(status = message)

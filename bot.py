@@ -19,7 +19,7 @@ class MyStreamer(TwythonStreamer):
 
         movie_regex = r"@\w+ rate "
         weather_regex = r"@\w+ weather for "
-        laugh_regex = r"@\w+ make me laugh"
+        reddit_regex = r"@\w+ (?:\/)?r\/(\w+)"
 
         request = data['text'].lower()
         tweet_id = data['id']
@@ -31,8 +31,8 @@ class MyStreamer(TwythonStreamer):
         elif re.match(weather_regex, request):
             helpers.tweet_weather(weather_regex, request, tweet_id, username)
 
-        elif re.match(laugh_regex, request):
-            link = helpers.make_me_laugh()
+        elif re.match(reddit_regex, request):
+            link = helpers.get_top_link(request, reddit_regex)
             helpers.tweet_link(tweet_id, username, link)
 
     def on_error(self, status_code, data):

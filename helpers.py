@@ -35,10 +35,11 @@ def get_movie_rating(movie):
     except IndexError:
         return None
 
-def make_me_laugh():
-    """Returns the top r/funny link"""
+def get_top_link(tweet, regex):
+    """Returns the top link for the given subreddit"""
 
-    result = R.get_subreddit('funny').get_top(limit=1)
+    subreddit = re.sub(regex, r"\1", tweet)
+    result = R.get_subreddit(subreddit).get_top(limit=1)
     top_post = result.next()
     return top_post.short_link
 
@@ -72,10 +73,10 @@ def get_weather(location):
 
     return report
 
-def tweet_rating(movie_regex, tweet, tweet_id, username):
+def tweet_rating(regex, tweet, tweet_id, username):
     """Replies with a movie rating"""
 
-    movie = re.sub(movie_regex, '', tweet)
+    movie = re.sub(regex, '', tweet)
     result = get_movie_rating(movie)
 
     if result:
@@ -89,10 +90,10 @@ def tweet_rating(movie_regex, tweet, tweet_id, username):
         response = "%s Can't find a rating for %s." % (username, movie)
         T.update_status(status = response)
 
-def tweet_weather(weather_regex, tweet, tweet_id, username):
+def tweet_weather(regex, tweet, tweet_id, username):
     """Replies with the weather report"""
 
-    location = re.sub(weather_regex, '', tweet)
+    location = re.sub(regex, '', tweet)
     report = get_weather(location)
 
     location_name, current, max_today, summary = report

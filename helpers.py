@@ -47,7 +47,7 @@ def get_weather(location):
     """Returns today's forecast for the given location"""
 
     # Find latitude and longitude values
-    results = Geocoder.geocode(location, address=None)
+    results = Geocoder.geocode(location)
     name_of_place_found = str(results[0])
     coordinates = results[0].coordinates
     lat, lon = coordinates

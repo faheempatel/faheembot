@@ -1,0 +1,4 @@
+Twython >= 3.1.0
+Praw >= 2.1.11
+Rottentomatoes >= 1.0.1
+Pygeocoder >= 1.2.1.1

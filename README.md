@@ -1,6 +1,6 @@
 #faheembot
 
-A WIP Twitter bot that responds to specific queries tweeted to it.
+A WIP Twitter bot that responds to specific queries I tweet it.
 
 ##TODO
 - [x] Implement Twitter's streaming API
